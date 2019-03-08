@@ -36,8 +36,8 @@ Licence URI: http://www.os-templates.com/template-terms
           var out_data = {{out_data|tojson}};
           var url_data = {{url_data|tojson}};
           for (var i = 0; i < url_data.length; i++) {
-            url = "https://image.tmdb.org/t/p/w92/" + url_data[i]
-            id = "movie" + out_data[i]
+            var url = "https://image.tmdb.org/t/p/w92/" + url_data[i]
+            var id = "movie" + out_data[i]
             var img = document.createElement('img');
             img.className = "img"
             img.src = url;

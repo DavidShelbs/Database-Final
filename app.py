@@ -44,4 +44,5 @@ def search():
     return flask.redirect('')
 
 if __name__ == '__main__':
-    app.run(host='192.168.0.16', port='80', debug='false')
+    app.run(host='0.0.0.0', port='80', debug='false')
+    # app.run(host='192.168.0.16', port='80', debug='false')
