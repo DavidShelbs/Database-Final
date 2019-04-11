@@ -15,13 +15,13 @@ a="Hello server"
 s.send(a.encode('ascii'))
 
 with open('received_file.mp4', 'wb') as f:
-		print ('file opened')
-		while True:
-				data = s.recv(1024)
-				if not data:
-						break
-				# write data to a file
-				f.write(data)
+	print ('file opened')
+	while True:
+		data = s.recv(1024)
+		if not data:
+			break
+		# write data to a file
+		f.write(data)
 
 f.close()
 print('Successfully get the file')
