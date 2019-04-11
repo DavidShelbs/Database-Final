@@ -329,7 +329,11 @@ table a, #comments a{background-color:inherit;}
 
 
 .para{margin:0,auto; text-align:center}
-.img{margin:0,auto; display:block}
+.img {
+	margin:0,auto;
+	display:block;
+	float: right;
+}
 
 /* ------------------------------------------------------------------------------------------------------------ */
 /* ------------------------------------------------------------------------------------------------------------ */
