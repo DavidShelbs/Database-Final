@@ -12,6 +12,7 @@ Licence URI: http://www.os-templates.com/template-terms
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <link href="static/layout/styles/layout.css" rel="stylesheet" type="text/css" media="all">
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"> </script>
 </head>
 <body id="top">
   <div id="pageintro" class="hoc clear">
@@ -32,21 +33,40 @@ Licence URI: http://www.os-templates.com/template-terms
               </form>
             </footer>
           </article>
-          <script language="JavaScript">
-          var out_data = {{out_data|tojson}};
-          var url_data = {{url_data|tojson}};
-          for (var i = 0; i < url_data.length; i++) {
-            var url = "https://image.tmdb.org/t/p/w92/" + url_data[i]
-            var id = "movie" + out_data[i]
-            var img = document.createElement('img');
-            img.className = "img"
-            img.src = url;
-            document.getElementById('top').appendChild(img);
-            var para = document.createElement("p");
-            para.className = "para"
-            para.innerHTML = out_data[i]
-            document.getElementById('top').appendChild(para);
-          }
+          <div class="wrapper">
+            <div class="profile">
+              <table id= "userdata" border="2">
+                <thead>
+                  <th>Title</th>
+                  <th>Cover</th>
+                </thead>
+                <tbody>
+
+                </tbody>
+              </table>
+
+            </div>
+          </div>
+            <script>
+
+              $(function() {
+
+
+               var people = [];
+
+               $.getJSON('static/movies.json', function(data) {
+                   $.each(data.movie, function(i, f) {
+                      var url = "https://image.tmdb.org/t/p/w92/" + f.url;
+                      var tblRow = "<tr>" + "<td>" + f.title + "</td>" +
+                       "<td>" + "<img id = 'url_img' >" + "</td>" + "</tr>"
+                       $(tblRow).appendTo("#userdata tbody");
+                       document.getElementById('url_img').src = url;
+                       document.getElementById('url_img').id = url;
+                 });
+
+               });
+
+            });
           </script>
         </li>
       </ul>
