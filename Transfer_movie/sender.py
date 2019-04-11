@@ -17,7 +17,11 @@ while True:
 	data = conn.recv(1024)
 	print('Server received', repr(data))
 
-	filename = 'Girls.Trip.2017.720p.BluRay.x264-[YTS.AG].mp4'
+	# filename = 'Girls.Trip.2017.720p.BluRay.x264-[YTS.AG].mp4'
+	# filename = 'E:Movies\\Action\\Hunger Games\\The.Hunger.Games.Catching.Fire.2013.720p.BluRay.x264.YIFY.mp4'
+	print ("Please insert your location")
+	print ("Example: E:Movies\\Action\\Hunger Games\\The.Hunger.Games.Catching.Fire.2013.720p.BluRay.x264.YIFY.mp4")
+	filename = input()
 	f = open(filename,'rb')
 	l = f.read(1024)
 	while (l):
