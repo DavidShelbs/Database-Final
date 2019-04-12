@@ -14,46 +14,46 @@ data['movie'] = []
 
 @app.route('/')
 def home():
+    print("/")
     return flask.render_template('index.html')
 
 @app.route('/index.html')
 def index():
+    print("/index.html")
     return flask.render_template('index.html')
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
-    if request.method == 'POST':
-        out_data = list()
-        url_data = list()
-        data['movie'].clear()
+    # if request.method == 'POST':
+    print("/search")
+    data['movie'].clear()
 
-        search_query = request.form['search']
+    search_query = request.form['search']
 
-        search = tmdb.Search()
-        response = search.movie(query=search_query)
-        for s in search.results:
-            out_data.append(s['title'])
-            url_data.append(s['poster_path'])
-            data['movie'].append({
-                'title': s['title'],
-                'url': s['poster_path'],
-            })
+    search = tmdb.Search()
+    response = search.movie(query=search_query)
+    for s in search.results:
+        data['movie'].append({
+            'title': s['title'],
+            'url': s['poster_path'],
+        })
 
-        # movies = movie_api.search_movie(search_query)
-        #
-        # for movie in movies:
-        #     out_data.append(movie['title'])
-        #     id = movie.movieID
-        #     # film = movie_api.get_movie(id)
-        #     # if 'cover url' in film:
-        #     #     url_data.append(film['cover url'])
-        print(data['movie'])
-        with open('static/movies.json', 'w') as outfile:
-            json.dump(data, outfile)
-        # print(out_data)
-        # print(url_data)
-        return flask.render_template('index.html', out_data = out_data, url_data = url_data)
-    return flask.redirect('')
+    with open('static/movies.json', 'w') as outfile:
+        json.dump(data, outfile)
+    print("hi")
+    return flask.render_template('index.html')
+
+@app.after_request
+def add_header(r):
+    """
+    Add headers to both force latest IE rendering engine or Chrome Frame,
+    and also to cache the rendered page for 10 minutes.
+    """
+    r.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    r.headers["Pragma"] = "no-cache"
+    r.headers["Expires"] = "0"
+    r.headers['Cache-Control'] = 'public, max-age=0'
+    return r
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port='80', debug='false')

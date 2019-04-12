@@ -1,11 +1,4 @@
 <!DOCTYPE html>
-<!--
-Template Name: Brickary
-Author: <a href="http://www.os-templates.com/">OS Templates</a>
-Author URI: http://www.os-templates.com/
-Licence: Free to use under our free template licence terms
-Licence URI: http://www.os-templates.com/template-terms
--->
 <html>
 <head>
 <title>Furby</title>
@@ -13,6 +6,7 @@ Licence URI: http://www.os-templates.com/template-terms
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <link href="static/layout/styles/layout.css" rel="stylesheet" type="text/css" media="all">
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"> </script>
+
 </head>
 <body id="top">
   <div id="pageintro" class="hoc clear">
@@ -37,46 +31,51 @@ Licence URI: http://www.os-templates.com/template-terms
             <div class="profile">
               <table id= "userdata" border="2">
                 <thead>
-                  <th>Title</th>
-                  <th>Cover</th>
+                  <tr>
+                    <th>Title</th>
+                    <th>Cover</th>
+                  </tr>
                 </thead>
-                <tbody>
-
-                </tbody>
+                <tbody></tbody>
               </table>
-
             </div>
           </div>
-            <script>
-
-              $(function() {
-
-
-               var people = [];
-
-               $.getJSON('static/movies.json', function(data) {
-                   $.each(data.movie, function(i, f) {
-                      var url = "https://image.tmdb.org/t/p/w92/" + f.url;
-                      var tblRow = "<tr>" + "<td>" + f.title + "</td>" +
-                       "<td>" + "<img id = 'url_img' >" + "</td>" + "</tr>"
-                       $(tblRow).appendTo("#userdata tbody");
-                       document.getElementById('url_img').src = url;
-                       document.getElementById('url_img').id = url;
-                 });
-
-               });
-
-            });
-          </script>
         </li>
       </ul>
     </div>
     <!-- ################################################################################################ -->
   </div>
   <!-- ################################################################################################ -->
-<script src="static/layout/scripts/jquery.min.js"></script>
 <script src="static/layout/scripts/jquery.backtotop.js"></script>
 <script src="static/layout/scripts/jquery.mobilemenu.js"></script>
 <script src="static/layout/scripts/jquery.flexslider-min.js"></script>
+<script>
+  function search() {
+    // var table = document.getElementById('userdata');
+    // for (var i = table.rows.length - 1; i > 0; i--) {
+    //   table.deleteRow(i);
+    // }
+    $.getJSON('static/movies.json', function(data) {
+      $.each(data.movie, function(i, f) {
+        var url = "https://image.tmdb.org/t/p/w92/" + f.url;
+        var tblRow = "<tr>" + "<td>" + f.title + "</td>" + "<td>" + "<img id = 'url_img' >" + "</td>" + "</tr>"
+        $(tblRow).appendTo("#userdata tbody");
+        document.getElementById('url_img').src = url;
+        document.getElementById('url_img').id = url;
+      });
+    });
+  }
+
+  $(function(){
+    search();
+  });
+
+  $(function(){
+    search();
+    $('.group[action="search"]').submit(function(){
+      search();
+    });
+  });
+</script>
 </body>
 </html>

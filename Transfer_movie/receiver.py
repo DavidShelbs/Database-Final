@@ -1,13 +1,13 @@
 # client
 
-import socket                   
+import socket
 import time
 
 start_time = time.time()
 
 s = socket.socket()             # Create a socket object
 # host = socket.gethostname()     # Get local machine name
-host = "10.106.62.170"
+host = "10.106.68.173"
 port = 60000                    # Reserve a port for your service.
 
 s.connect((host, port))
