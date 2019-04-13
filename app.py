@@ -67,6 +67,11 @@ def login():
         db.close()
     return home()
 
+@app.route('/logout')
+def logout():
+    session['logged_in'] = False
+    return home()
+
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
