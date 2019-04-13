@@ -12,6 +12,42 @@ File: Layout CSS
 @import url("custom.flexslider.css");
 @import url("framework.css");
 
+table {
+  width: 100%;
+}
+th {
+  text-align: center;
+}
+td {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+.poster {
+  width: 25%;
+  vertical-align: middle;
+}
+.title {
+
+}
+.release_date {
+  text-align: center;
+  width: 15%;
+  vertical-align: middle;
+}
+#header {
+  font-size: 100px;
+}
+body {
+  background-image: url("/static/images/background.jpg")
+}
+.profile {
+  overflow:auto;
+  height: 500px;
+  width:100%;
+}
+thead {
+  display: none;
+}
 /* Rows
 --------------------------------------------------------------------------------------------------------------- */
 .row0{border-bottom:1px solid;}
@@ -42,14 +78,14 @@ File: Layout CSS
 
 /* Page Intro
 --------------------------------------------------------------------------------------------------------------- */
-#pageintro{padding:150px 0 300px;}
+#pageintro{padding:50px 0 300px;}
 
 #pageintro li article{display:block; max-width:75%; margin:0 auto; text-align:center;}
 #pageintro li article *{margin:0;}
 #pageintro li p:first-of-type{margin-bottom:10px; font-style:italic;}
 #pageintro li .heading{margin-bottom:30px; font-size:3rem; word-wrap:break-word;}
 #pageintro li p:nth-of-type(2){line-height:1.5rem;}
-#pageintro li footer{margin-top:40px;}
+#pageintro li footer{margin-top:20px; margin-bottom: 40px}
 
 #pageintro footer form{display:block; position:relative; max-width:50%; margin:0 auto; overflow:hidden;}
 #pageintro footer input, #pageintro footer button{display:block; height:44px; border:none; border-radius:22px;}

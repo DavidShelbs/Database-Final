@@ -32,11 +32,16 @@ def search():
 
     search = tmdb.Search()
     response = search.movie(query=search_query)
+    i = 0
     for s in search.results:
-        data['movie'].append({
-            'title': s['title'],
-            'url': s['poster_path'],
-        })
+        # if i < 4:
+            data['movie'].append({
+                'title': s['title'],
+                'overview': s['overview'],
+                'poster_path': s['poster_path'],
+                'release_date': s['release_date']
+            })
+            # i = i + 1
 
     with open('static/movies.json', 'w') as outfile:
         json.dump(data, outfile)
