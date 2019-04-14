@@ -56,6 +56,27 @@ thead {
   float: right;
   clear: both;
 }
+
+#openfile {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+
+#fileupload {
+  display:block;
+  height:44px;
+  border:none;
+  border-radius:22px;
+  background-color: white;
+  border-radius:22px;
+  padding:5px 15px 5px 15px;
+  vertical-align: center;
+}
+
 /* Rows
 --------------------------------------------------------------------------------------------------------------- */
 .row0{border-bottom:1px solid;}
@@ -95,9 +116,9 @@ thead {
 #pageintro li p:nth-of-type(2){line-height:1.5rem;}
 #pageintro li footer{margin-top:20px; margin-bottom: 40px}
 
-#pageintro footer form{display:block; position:relative; max-width:50%; margin:0 auto; overflow:hidden;}
+#pageintro footer form{display:block; position:relative; max-width:75%; margin:0 auto; overflow:hidden;}
 #pageintro footer input, #pageintro footer button{display:block; height:44px; border:none; border-radius:22px;}
-#pageintro footer input{width:100%; padding:5px 40px 5px 15px;}
+#pageintro footer input{width:100%; padding:5px 15px 5px 15px;}
 #pageintro footer button{position:absolute; top:1px; right:1px; width:42px; height:42px; font-size:16px; cursor:pointer; border-radius:50%;}
 #pageintro footer button em{display:none;}
 

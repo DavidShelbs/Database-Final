@@ -26,13 +26,21 @@
               <form class="group" method="post" action="search">
                 <fieldset>
                   <legend>Search:</legend>
-                  <input type="text" value="" placeholder="Search Here&hellip;" name="search_bar">
+                  <input type="text" value="" placeholder="Search Here&hellip;" name="search_bar"style="margin-bottom:5px;">
                   <button class="fa fa-sign-in" type="submit" title="Submit"><em>Submit</em></button>
                 </fieldset>
               </form>
               <form method=post enctype=multipart/form-data action="upload">
-                <input type=file name=file>
-                <input type=submit value=Upload>
+                <label class="fileContainer">
+                  <div id="fileupload" style="margin-top:5px; margin-bottom:5px; width:49%;float:left;">
+                    <p id="file" style="font-style:normal; margin-top:5px; margin-bottom:5px;">Choose File</p>
+                  </div>
+                  <input id=openfile type="file" name="file"/>
+                </label>
+                <input type=submit value=Upload style="margin-top:5px; margin-bottom:5px;width:49%;float:right;">
+              </form>
+              <form enctype=multipart/form-data action="download">
+                <input type=submit value=Download style="margin-top:5px; margin-bottom:5px; width:100%;">
               </form>
             </footer>
           </article>

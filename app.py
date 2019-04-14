@@ -77,14 +77,18 @@ def upload_file():
             filename = secure_filename(file.filename)
             print(filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return redirect(url_for('uploaded_file',
-                                    filename=filename))
+            return home()
     return home()
 
 @app.route('/upload/<filename>')
 def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'],
-                               filename)
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+@app.route("/download")
+def download():
+    file = open("static/upload/VID_20181210_081527.mp4", "rb")
+    return flask.Response(file, mimetype="video/mp4", headers={"Content-disposition" : "attachment; filename=myplot.mp4"})
+
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -146,5 +150,5 @@ if __name__ == '__main__':
     );''')
     db.close()
     app.secret_key = os.urandom(12)
-    # app.run(host='0.0.0.0', port='80', debug='false')
-    app.run(host='192.168.0.20', port='80', debug='false')
+    app.run(host='0.0.0.0', port='80', debug='false')
+    # app.run(host='192.168.0.20', port='80', debug='false')
