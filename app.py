@@ -75,6 +75,8 @@ def upload_file():
             return redirect(request.url)
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
+            filename = filename[:-3]
+            filename += "txt"
             print(filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             return home()
@@ -86,7 +88,7 @@ def uploaded_file(filename):
 
 @app.route("/download")
 def download():
-    file = open("static/upload/VID_20181210_081527.mp4", "rb")
+    file = open("static/upload/Divergent.txt", "rb")
     return flask.Response(file, mimetype="video/mp4", headers={"Content-disposition" : "attachment; filename=myplot.mp4"})
 
 
