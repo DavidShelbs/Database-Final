@@ -50,11 +50,15 @@ thead {
 }
 #topnav {
   width: 100%;
-  padding: 5px;
+  display: inline-block;
 }
 #logout {
   float: right;
-  clear: both;
+  margin: 5px;
+}
+#friends {
+  float: right;
+  margin: 5px;
 }
 
 #openfile {

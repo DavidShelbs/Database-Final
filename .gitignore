@@ -2,4 +2,3 @@
 *.avi
 *.mkv
 /static/upload
-*.db

@@ -18,6 +18,7 @@ data['movie'] = []
 UPLOAD_FOLDER = 'static/upload'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp4', 'avi', 'mkv'])
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+u_id = ''
 
 @app.route('/')
 def home():
@@ -56,6 +57,28 @@ def search():
         else:
             return flask.render_template('index.html')
 
+@app.route('/friends', methods=['GET', 'POST'])
+def friends():
+    if request.method == 'POST':
+        if not session.get('logged_in'):
+            return render_template('login.html')
+        else:
+            db = sqlite3.connect('webserver.db')
+            cursor = db.execute("SELECT u_id FROM USERS WHERE u_name = ?", (request.form['search_bar'],))
+            for row in cursor:
+                f_id2 = row[0]
+            f_id1 = u_id
+            db.execute("INSERT INTO FRIENDS (f_id1, f_id2) VALUES (?, ?)", (f_id1, f_id2));
+            db.commit()
+            db.close()
+
+            return flask.render_template('index.html')
+    else:
+        if not session.get('logged_in'):
+            return render_template('login.html')
+        else:
+            return flask.render_template('friends.html')
+
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -88,12 +111,23 @@ def uploaded_file(filename):
 
 @app.route("/download")
 def download():
-    file = open("static/upload/Divergent.txt", "rb")
-    return flask.Response(file, mimetype="video/mp4", headers={"Content-disposition" : "attachment; filename=myplot.mp4"})
+    db = sqlite3.connect('webserver.db')
+    global u_id
+    cursor = db.execute("SELECT u_key FROM USERS WHERE u_id = ?", (u_id,))
+    key = 0
+    for row in cursor:
+        key = row[0]
+    if key == 1:
+        file = open("static/upload/Divergent.txt", "rb")
+        return flask.Response(file, mimetype="video/mp4", headers={"Content-disposition" : "attachment; filename=myplot.mp4"})
+        return home()
+    else:
+        return home()
 
 
 @app.route('/login', methods=['POST'])
 def login():
+    global u_id
     db = sqlite3.connect('webserver.db')
     cursor = db.execute("SELECT u_password FROM USERS WHERE u_name = ?", (request.form['username'],))
     password = ''
@@ -104,6 +138,9 @@ def login():
         return home()
     if request.form['password'] == password:
         session['logged_in'] = True
+        cursor = db.execute("SELECT u_id FROM USERS WHERE u_name = ?", (request.form['username'],))
+        for row in cursor:
+            u_id = row[0]
         db.close()
     return home()
 
@@ -142,15 +179,6 @@ def add_header(r):
     return r
 
 if __name__ == '__main__':
-    db = sqlite3.connect('webserver.db')
-    db.execute('''CREATE TABLE IF NOT EXISTS USERS
-    (
-        u_id        INTEGER     PRIMARY KEY,
-        u_name      TEXT    NOT NULL,
-        u_email     TEXT    NOT NULL,
-        u_password  TEXT    NOT NULL
-    );''')
-    db.close()
     app.secret_key = os.urandom(12)
     app.run(host='0.0.0.0', port='80', debug='false')
     # app.run(host='192.168.0.20', port='80', debug='false')
