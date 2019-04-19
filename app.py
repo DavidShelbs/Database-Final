@@ -118,8 +118,8 @@ def download():
     for row in cursor:
         key = row[0]
     if key == 1:
-        file = open("static/upload/Halp.txt", "rb")
-        return flask.Response(file, mimetype="video/mp4", headers={"Content-disposition" : "attachment; filename=myplot.png"})
+        file = open("static/upload/Divergent.txt", "rb")
+        return flask.Response(file, mimetype="video/mp4", headers={"Content-disposition" : "attachment; filename=Divergent.mp4"})
         return home()
     else:
         return home()
