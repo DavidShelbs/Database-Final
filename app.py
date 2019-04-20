@@ -1,6 +1,6 @@
 import flask
-import imdb
-from imdb import IMDb
+# import imdb
+# from imdb import IMDb
 from flask import Flask, flash, redirect, render_template, request, session, abort, url_for, send_from_directory
 import tmdbsimple as tmdb
 import json
@@ -11,7 +11,7 @@ from werkzeug.utils import secure_filename
 tmdb.API_KEY = '3aac901eabe71551bd666ed711135477'
 
 app = Flask(__name__)
-movie_api = IMDb()
+# movie_api = IMDb()
 data = {}
 data['movie'] = []
 
