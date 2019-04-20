@@ -36,7 +36,7 @@
                   <div id="fileupload" style="margin-top:5px; margin-bottom:5px; width:49%;float:left;">
                     <p id="file" style="font-style:normal; margin-top:5px; margin-bottom:5px;">Choose File</p>
                   </div>
-                  <input id=openfile type="file" name="file"/>
+                  <input id=openfile type="file" webkitdirectory name="file"/>
                 </label>
                 <input type=submit value=Upload style="margin-top:5px; margin-bottom:5px;width:49%;float:right;">
               </form>
@@ -95,6 +95,12 @@
       search();
     });
   });
+
+  document.querySelector("#openfile").onchange = function() {
+    [].slice.call( this.files ).forEach( function(v) {
+          $("body").append("<div>"+v.name+"</div>" );
+    });
+};
 </script>
 </body>
 </html>

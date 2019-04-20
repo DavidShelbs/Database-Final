@@ -86,6 +86,7 @@ def allowed_file(filename):
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
+        #####################################################################
         # check if the post request has the file part
         if 'file' not in request.files:
             flash('No file part')
@@ -103,11 +104,14 @@ def upload_file():
             print(filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             return home()
+        #####################################################################
     return home()
 
-@app.route('/upload/<filename>')
-def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+##############################################################################
+# @app.route('/upload/<filename>')
+# def uploaded_file(filename):
+#     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+##############################################################################
 
 @app.route("/download")
 def download():
