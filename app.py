@@ -1,20 +1,17 @@
 import flask
-# import imdb
-# from imdb import IMDb
 from flask import Flask, flash, redirect, render_template, request, session, abort, url_for, send_from_directory
 import tmdbsimple as tmdb
 import json
 import os
 import sqlite3
+import datetime
 from werkzeug.utils import secure_filename
 
 tmdb.API_KEY = '3aac901eabe71551bd666ed711135477'
 
 app = Flask(__name__)
-# movie_api = IMDb()
 data = {}
 data['movie'] = []
-
 UPLOAD_FOLDER = 'static/upload'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp4', 'avi', 'mkv'])
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -33,20 +30,17 @@ def search():
             return render_template('login.html')
         else:
             data['movie'].clear()
-
             search_query = request.form['search_bar']
-
             search = tmdb.Search()
             response = search.movie(query=search_query)
-            i = 0
             for s in search.results:
                 data['movie'].append({
                     'title': s['title'],
                     'overview': s['overview'],
                     'poster_path': s['poster_path'],
-                    'release_date': s['release_date']
+                    'release_date': s['release_date'],
+                    'vote_average': s['vote_average']
                 })
-
             with open('static/movies.json', 'w') as outfile:
                 json.dump(data, outfile)
             return flask.render_template('index.html')
@@ -61,7 +55,6 @@ def friends():
 
     db = sqlite3.connect('webserver.db')
     info = ""
-    # find = db.execute("SELECT u_name FROM USERS ")
     find1 = db.execute("SELECT f_id2 FROM FRIENDS WHERE f_id1 = ?", (session['u_id'],))
     find2 = db.execute("SELECT f_id1 FROM FRIENDS WHERE f_id2 = ?", (session['u_id'],))
     your_friends = []
@@ -81,7 +74,6 @@ def friends():
     db.commit()
     db.close()
 
-
     if request.method == 'POST':
         if not session.get('logged_in'):
             return render_template('login.html')
@@ -95,13 +87,9 @@ def friends():
             session['f_id1'] = session['u_id']
 
             if f_id2 != "":
-
                 if f_id2 not in your_friends:
                     db.execute("INSERT INTO FRIENDS (f_id1, f_id2) VALUES (?, ?)", (session['f_id1'], f_id2));
-
-
                     info = ""
-                    # find = db.execute("SELECT u_name FROM USERS ")
                     find1 = db.execute("SELECT f_id2 FROM FRIENDS WHERE f_id1 = ?", (session['u_id'],))
                     find2 = db.execute("SELECT f_id1 FROM FRIENDS WHERE f_id2 = ?", (session['u_id'],))
                     your_friends = []
@@ -127,66 +115,76 @@ def friends():
             return render_template('login.html')
         else:
             return flask.render_template('friends.html', info = info)
-    
-
-# def allowed_file(filename):
-#     return '.' in filename and \
-#            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
-    # if request.method == 'POST':
+    if not session.get('logged_in'):
+        return render_template('login.html')
+    db = sqlite3.connect('webserver.db')
     files = list()
+    movie_titles = list()
     filename = ""
     file = request.args.get('file', 0, type=None)
+    m_id = ""
+    j = 0
+    age = 99
+    collection = ""
+    today = datetime.datetime.now()
     for i in range(len(file)):
         if file[i] != ',':
             filename += file[i]
         else:
             files.append(filename)
+            movie_titles.append(Title(filename))
             filename = ""
 
-    for i in range(len(files)):
+    for i in range(len(movie_titles)):
         search = tmdb.Search()
-        response = search.movie(query=files[i])
+        response = search.movie(query=movie_titles[i])
         for s in search.results:
             data['movie'].append({
                 'title': s['title'],
+                'overview': s['overview'],
                 'poster_path': s['poster_path'],
-                'release_date': s['release_date']
+                'release_date': s['release_date'],
+                'vote_average': s['vote_average'],
+                'id': s['id']
             })
+            if s['release_date'] != None and s['release_date'] != '':
+                age = today.year - int(s['release_date'][0:4])
+            # print(int(s['release_date'][0:3]))
+            cursor = db.execute("SELECT m_id FROM MOVIES WHERE m_id = ?", (s['id'],));
+            for row in cursor:
+                m_id = row[0]
+            if m_id == "":
+                db.execute("INSERT INTO MOVIES (m_id, m_release_date, m_title, m_age, m_poster) VALUES (?, ?, ?, ?, ?)", (s['id'], s['release_date'], s['title'], age, s['poster_path'],));
+                print("Added " + s['title'])
+                db.execute("INSERT INTO REVIEWS (m_rating, m_id) VALUES (?, ?)", (s['vote_average'], s['id'],));
+                cursor = db.execute("SELECT r_id FROM REVIEWS WHERE m_id = ?", (s['id'],));
+                for row in cursor:
+                    r_id = row[0]
+                db.execute("UPDATE MOVIES SET r_id = ? WHERE m_id = ?", (r_id, s['id'],));
+            else:
+                print("Updated " + s['title'])
+                db.execute("UPDATE REVIEWS SET m_rating = ? WHERE m_id = ?", (s['vote_average'], s['id'],));
+                db.execute("UPDATE MOVIES SET m_age = ? WHERE m_id = ?", (age, s['id'],));
+                m_id = ""
+            cursor = db.execute("SELECT m_id, u_id FROM COLLECTIONS WHERE m_id = ? AND u_id = ?", (s['id'], session['u_id'],));
+            for row in cursor:
+                collection = row[0]
+            if collection == "":
+                db.execute("INSERT INTO COLLECTIONS (m_id, u_id) VALUES (?, ?)", (s['id'], session['u_id'],))
+            else:
+                collection = ""
+            db.commit()
+            break
 
-    print(files)
-        #####################################################################
-        # check if the post request has the file part
-        # if 'file' not in request.files:
-        #     flash('No file part')
-        #     return redirect(request.url)
-        # files = request.files.getlist('files[]')
-        # for file in files:
-        #     print(file.filename)
+        with open('static/movies.json', 'w') as outfile:
+            json.dump(data, outfile)
 
-            # filename = secure_filename(file.filename)
-            # file.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
-        # if user does not select file, browser also
-        # submit an empty part without filename
-        # if file.filename == '':
-        #     flash('No selected file')
-        #     return redirect(request.url)
-        # # if file and allowed_file(file.filename):
-        # filename = secure_filename(file.filename)
-        # # filename = filename[:-3]
-        # # filename += "txt"
-        # print(filename)
-        # file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        #####################################################################
+    db.commit()
+    db.close()
     return home()
-
-##############################################################################
-# @app.route('/upload/<filename>')
-# def uploaded_file(filename):
-#     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
-##############################################################################
 
 @app.route("/download")
 def download():
@@ -201,7 +199,6 @@ def download():
         return home()
     else:
         return home()
-
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -246,6 +243,23 @@ def signup():
                 return render_template('index.html')
     return render_template('signup.html')
 
+def Title(name):
+	length = len(name)
+	title = ""
+	for x in range(0, length):
+		if name[x].isdigit() and name[x+1].isdigit() and name[x+2].isdigit() and name[x+3].isdigit():
+			return title[:-1]
+		if name[x].isdigit() and name[x+1].isdigit() and name[x+2].isdigit() and name[x+3] == 'p':
+			return title[:-1]
+		if name[x] == 'm' and name[x+1] == 'p' and name[x+2] == '4':
+			return title[:-1]
+		if name[x] == "(" and name[x+1].isdigit() and name[x+2].isdigit() and name[x+3].isdigit() and name[x+4].isdigit() and name[x+5] == ")":
+			return title[:-1]
+		if name[x] != '.':
+			title = title + name[x]
+		else:
+			title = title + " "
+	return title
 
 @app.after_request
 def add_header(r):

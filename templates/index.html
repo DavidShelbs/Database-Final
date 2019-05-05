@@ -10,7 +10,6 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script>window.jQuery || document.write('<script src="{{url_for('static', filename='jquery.js') }}">\x3C/script>')</script>
 <script type=text/javascript>$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};</script>
-
 </head>
 <body id="top">
   <div id="topnav">
@@ -18,13 +17,11 @@
     <a href='/friends' style="text-decoration:none;"><input type="button" value="Friends" class="btn btn-primary btn-large btn-block" id="friends"></a>
   </div>
   <div id="pageintro" class="hoc clear">
-    <!-- ################################################################################################ -->
     <div class="flexslider basicslider">
       <ul class="slides">
         <li>
           <article>
             <h1 id="header">Furby</h1>
-            <!-- <h3 class="heading">Find A Movie</h3> -->
             <p>Search your movies!</p>
             <footer id="search">
               <form class="group" method="post" action="search">
@@ -39,7 +36,6 @@
                   <div id="fileupload" style="margin-top:5px; margin-bottom:5px; width:49%;float:left;">
                     <p id="file" style="font-style:normal; margin-top:5px; margin-bottom:5px;">Choose Folder</p>
                   </div>
-                  <!-- <input id=openfile type="file" webkitdirectory name="file"/> -->
                   <input type="file" webkitdirectory id="openfile" name="file" multiple />
                 </label>
                 <input id="upload" type=submit value=Upload style="margin-top:5px; margin-bottom:5px;width:49%;float:right;">
@@ -75,18 +71,12 @@
         </li>
       </ul>
     </div>
-    <!-- ################################################################################################ -->
   </div>
-  <!-- ################################################################################################ -->
 <script src="static/layout/scripts/jquery.backtotop.js"></script>
 <script src="static/layout/scripts/jquery.mobilemenu.js"></script>
 <script src="static/layout/scripts/jquery.flexslider-min.js"></script>
 <script>
   function search() {
-    // var table = document.getElementById('userdata');
-    // for (var i = table.rows.length - 1; i > 0; i--) {
-    //   table.deleteRow(i);
-    // }
     $.getJSON('static/movies.json', function(data) {
       $.each(data.movie, function(i, f) {
         var url = "https://image.tmdb.org/t/p/w92/" + f.poster_path;
@@ -111,15 +101,11 @@
 </script>
 <script>
   function handleFileSelect(evt) {
-    var files = evt.target.files; // FileList object
+    var files = evt.target.files;
     var tblRow = "<input id='filename' name='filestring' type='hidden'>"
-
-    // files is a FileList of File objects. List some properties.
     var output = [];
     var string = "";
     for (var i = 0, f; f = files[i]; i++) {
-
-        // output.push(f.name);
         string += f.name + ",";
         output.push(f.name)
     }
