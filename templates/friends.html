@@ -9,6 +9,30 @@
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"> </script>
 
 </head>
+
+
+
+<!-- <head>
+    <title>Flask Message flashing</title>
+</head>
+  <body>
+    {% with messages = get_flashed_messages() %}
+       {% if messages %}
+          <ul>
+             {% for message in messages %}
+             <li<{{ message }}</li>
+             {% endfor %}
+          </ul>
+       {% endif %}
+    {% endwith %}
+
+    <h1>Flask Message Flashing Example</h1>
+    <p>Do you want to <a href = "{{ url_for('login') }}">
+       <b>log in?</b></a></p>
+  </body> -->
+
+
+
 <body id="top">
   <div id="topnav">\
     <a href='/' style="text-decoration:none;"><input type="button" value="Home" class="btn btn-primary btn-large btn-block" id="home"></a>
@@ -28,10 +52,13 @@
               <form class="group" method="post" action="friends">
                 <fieldset>
                   <legend>Search:</legend>
-                  <input type="text" value="" placeholder="Find Friends&hellip;" name="search_bar"style="margin-bottom:5px;">
+                  <input type="text" value="" placeholder="Request a friend&hellip;" name="search_bar"style="margin-bottom:5px;">
                   <button class="fa fa-sign-in" type="submit" title="Submit"><em>Submit</em></button>
                 </fieldset>
               </form>
+              {% if info %}
+                <p><strong>These people want to be friends: </strong> {{ info }}
+              {% endif %}
               <!-- <form method=post enctype=multipart/form-data action="upload">
                 <label class="fileContainer">
                   <div id="fileupload" style="margin-top:5px; margin-bottom:5px; width:49%;float:left;">
@@ -98,4 +125,11 @@
   });
 </script>
 </body>
+
+
+
+
+
+
+
 </html>
