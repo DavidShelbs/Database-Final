@@ -58,25 +58,76 @@ def search():
 
 @app.route('/friends', methods=['GET', 'POST'])
 def friends():
+
+    db = sqlite3.connect('webserver.db')
+    info = ""
+    # find = db.execute("SELECT u_name FROM USERS ")
+    find1 = db.execute("SELECT f_id2 FROM FRIENDS WHERE f_id1 = ?", (session['u_id'],))
+    find2 = db.execute("SELECT f_id1 FROM FRIENDS WHERE f_id2 = ?", (session['u_id'],))
+    your_friends = []
+    wants_you = []
+    x = ""
+    for row in find1:
+        your_friends.append(row[0])
+    for row in find2:
+        wants_you.append(row[0])
+    for i in wants_you:
+      if i not in your_friends:
+        find = db.execute("SELECT u_name FROM USERS WHERE u_id = ?", (i,))
+        for row in find:
+          x += row[0] + ", "
+    x = x[:-2]
+    info += str(x)
+    db.commit()
+    db.close()
+
+
     if request.method == 'POST':
         if not session.get('logged_in'):
             return render_template('login.html')
         else:
             db = sqlite3.connect('webserver.db')
+
             cursor = db.execute("SELECT u_id FROM USERS WHERE u_name = ?", (request.form['search_bar'],))
+            f_id2 = ""
             for row in cursor:
                 f_id2 = row[0]
             session['f_id1'] = session['u_id']
-            db.execute("INSERT INTO FRIENDS (f_id1, f_id2) VALUES (?, ?)", (session['f_id1'], f_id2));
-            db.commit()
-            db.close()
 
-            return flask.render_template('index.html')
+            if f_id2 != "":
+
+                if f_id2 not in your_friends:
+                    db.execute("INSERT INTO FRIENDS (f_id1, f_id2) VALUES (?, ?)", (session['f_id1'], f_id2));
+
+
+                    info = ""
+                    # find = db.execute("SELECT u_name FROM USERS ")
+                    find1 = db.execute("SELECT f_id2 FROM FRIENDS WHERE f_id1 = ?", (session['u_id'],))
+                    find2 = db.execute("SELECT f_id1 FROM FRIENDS WHERE f_id2 = ?", (session['u_id'],))
+                    your_friends = []
+                    wants_you = []
+                    x = ""
+                    for row in find1:
+                        your_friends.append(row[0])
+                    for row in find2:
+                        wants_you.append(row[0])
+                    for i in wants_you:
+                      if i not in your_friends:
+                        find = db.execute("SELECT u_name FROM USERS WHERE u_id = ?", (i,))
+                        for row in find:
+                          x += row[0] + ", "
+                    x = x[:-2]
+                    info += str(x)
+                    db.commit()
+                    db.close()
+        return render_template('friends.html', info = info)
+
     else:
         if not session.get('logged_in'):
             return render_template('login.html')
         else:
-            return flask.render_template('friends.html')
+            return flask.render_template('friends.html', info = info)
+    
 
 # def allowed_file(filename):
 #     return '.' in filename and \
