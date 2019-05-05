@@ -64,12 +64,15 @@ def friends():
         else:
             db = sqlite3.connect('webserver.db')
             cursor = db.execute("SELECT u_id FROM USERS WHERE u_name = ?", (request.form['search_bar'],))
+            f_id2 = ""
             for row in cursor:
                 f_id2 = row[0]
             session['f_id1'] = session['u_id']
-            db.execute("INSERT INTO FRIENDS (f_id1, f_id2) VALUES (?, ?)", (session['f_id1'], f_id2));
-            db.commit()
-            db.close()
+            if f_id2 != "":
+                db.execute("INSERT INTO FRIENDS (f_id1, f_id2) VALUES (?, ?)", (session['f_id1'], f_id2));
+                db.commit()
+                print ("\n\nHi")
+                db.close()
 
             return flask.render_template('index.html')
     else:

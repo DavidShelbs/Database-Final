@@ -10,7 +10,8 @@
 
 </head>
 <body id="top">
-  <div id="topnav">
+  <div id="topnav">\
+    <a href='/' style="text-decoration:none;"><input type="button" value="Home" class="btn btn-primary btn-large btn-block" id="home"></a>
     <a href='/logout' style="text-decoration:none;"><input type="button" value="Log Out" class="btn btn-primary btn-large btn-block" id="logout"></a>
     <a href='/friends' style="text-decoration:none;"><input type="button" value="Friends" class="btn btn-primary btn-large btn-block" id="friends"></a>
   </div>
@@ -22,16 +23,16 @@
           <article>
             <h1 id="header">Furby</h1>
             <!-- <h3 class="heading">Find A Movie</h3> -->
-            <p>Search your movies!</p>
+            <p>Search friend's movies!</p>
             <footer id="search">
               <form class="group" method="post" action="friends">
                 <fieldset>
                   <legend>Search:</legend>
-                  <input type="text" value="" placeholder="Search Here&hellip;" name="search_bar"style="margin-bottom:5px;">
+                  <input type="text" value="" placeholder="Find Friends&hellip;" name="search_bar"style="margin-bottom:5px;">
                   <button class="fa fa-sign-in" type="submit" title="Submit"><em>Submit</em></button>
                 </fieldset>
               </form>
-              <form method=post enctype=multipart/form-data action="upload">
+              <!-- <form method=post enctype=multipart/form-data action="upload">
                 <label class="fileContainer">
                   <div id="fileupload" style="margin-top:5px; margin-bottom:5px; width:49%;float:left;">
                     <p id="file" style="font-style:normal; margin-top:5px; margin-bottom:5px;">Choose File</p>
@@ -39,13 +40,13 @@
                   <input id=openfile type="file" name="file"/>
                 </label>
                 <input type=submit value=Upload style="margin-top:5px; margin-bottom:5px;width:49%;float:right;">
-              </form>
-              <form enctype=multipart/form-data action="download">
+              </form> -->
+             <!--  <form enctype=multipart/form-data action="download">
                 <input type=submit value=Download style="margin-top:5px; margin-bottom:5px; width:100%;">
-              </form>
+              </form> -->
             </footer>
           </article>
-          <div class="wrapper">
+         <!--  <div class="wrapper">
             <div class="profile">
               <table id="userdata" border="2">
                 <thead>
@@ -58,7 +59,7 @@
                 <tbody></tbody>
               </table>
             </div>
-          </div>
+          </div> -->
         </li>
       </ul>
     </div>
