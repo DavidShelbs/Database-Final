@@ -84,7 +84,28 @@ def friends():
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
-    if request.method == 'POST':
+    # if request.method == 'POST':
+    files = list()
+    filename = ""
+    file = request.args.get('file', 0, type=None)
+    for i in range(len(file)):
+        if file[i] != ',':
+            filename += file[i]
+        else:
+            files.append(filename)
+            filename = ""
+
+    for i in range(len(files)):
+        search = tmdb.Search()
+        response = search.movie(query=files[i])
+        for s in search.results:
+            data['movie'].append({
+                'title': s['title'],
+                'poster_path': s['poster_path'],
+                'release_date': s['release_date']
+            })
+
+    print(files)
         #####################################################################
         # check if the post request has the file part
         # if 'file' not in request.files:
@@ -93,9 +114,6 @@ def upload_file():
         # files = request.files.getlist('files[]')
         # for file in files:
         #     print(file.filename)
-        user =  request.form['username'];
-        password = request.form['password'];
-        return json.dumps({'status':'OK','user':user,'pass':password});
 
             # filename = secure_filename(file.filename)
             # file.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
@@ -110,7 +128,6 @@ def upload_file():
         # # filename += "txt"
         # print(filename)
         # file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        return home()
         #####################################################################
     return home()
 

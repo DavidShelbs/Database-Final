@@ -81,7 +81,7 @@ thead {
   vertical-align: center;
 }
 
-.outer {
+/* .outer {
   overflow: hidden;
   position: relative;
 }
@@ -91,7 +91,7 @@ thead {
   width: 100px;
   right: -50px;
   top: 50px;
-}
+} */
 
 /* Rows
 --------------------------------------------------------------------------------------------------------------- */

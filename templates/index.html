@@ -7,6 +7,9 @@
 <link href="static/layout/styles/styles.css" rel="stylesheet" type="text/css" media="all">
 <link rel='icon' href='/static/images/favicon.ico' type='image/x-icon'/ >
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"> </script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="{{url_for('static', filename='jquery.js') }}">\x3C/script>')</script>
+<script type=text/javascript>$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};</script>
 
 </head>
 <body id="top">
@@ -34,21 +37,23 @@
               <form method=post enctype=multipart/form-data action="upload">
                 <label class="fileContainer">
                   <div id="fileupload" style="margin-top:5px; margin-bottom:5px; width:49%;float:left;">
-                    <p id="file" style="font-style:normal; margin-top:5px; margin-bottom:5px;">Choose File</p>
+                    <p id="file" style="font-style:normal; margin-top:5px; margin-bottom:5px;">Choose Folder</p>
                   </div>
                   <!-- <input id=openfile type="file" webkitdirectory name="file"/> -->
                   <input type="file" webkitdirectory id="openfile" name="file" multiple />
                 </label>
-                <input type=submit value=Upload style="margin-top:5px; margin-bottom:5px;width:49%;float:right;">
+                <input id="upload" type=submit value=Upload style="margin-top:5px; margin-bottom:5px;width:49%;float:right;">
               </form>
               <form enctype=multipart/form-data action="download">
                 <input type=submit value=Download style="margin-top:5px; margin-bottom:5px; width:100%;">
               </form>
               <div class="outer">
                 <div class="inner">
-                  <table id="list">
-                    <tbody></tbody>
-                  </table>
+                  <form method=post action="upload">
+                    <table id="list">
+                      <tbody></tbody>
+                    </table>
+                  </form>
                 </div>
               </div>
             </footer>
@@ -107,24 +112,36 @@
 <script>
   function handleFileSelect(evt) {
     var files = evt.target.files; // FileList object
+    var tblRow = "<input id='filename' name='filestring' type='hidden'>"
 
     // files is a FileList of File objects. List some properties.
     var output = [];
+    var string = "";
     for (var i = 0, f; f = files[i]; i++) {
 
         // output.push(f.name);
-        var tblRow = '<tr>' + "<td id = 'filename'>" + f.name + '</td>' + '</tr>';
-        $(tblRow).appendTo("#list tbody");
+        string += f.name + ",";
+        output.push(f.name)
     }
+    tblRow += "</td>"
+    $(tblRow).appendTo("#list tbody");
+    document.getElementById('filename').value = string
+    document.getElementById('file').innerHTML = "Click Upload ---->"
   }
 
-//   document.querySelector("#openfile").onchange = function() {
-//     [].slice.call( this.files ).forEach( function(v) {
-//           $("body").append("<div>"+v.name+"</div>" );
-//     });
-// };
+  $(function() {
+    $('#upload').bind('click', function() {
+      $.getJSON($SCRIPT_ROOT + '/upload', {
+        file: $('input[name="filestring"]').val()
+      }, function(data) {
+        $("#result").text(data.result);
+      });
+      return false;
+    });
+  });
 
   document.getElementById('openfile').addEventListener('change', handleFileSelect, false);
+
 </script>
 </body>
 </html>
