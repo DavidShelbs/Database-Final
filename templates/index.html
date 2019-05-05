@@ -38,35 +38,19 @@
                   </div>
                   <!-- <input id=openfile type="file" webkitdirectory name="file"/> -->
                   <input type="file" webkitdirectory id="openfile" name="file" multiple />
-                  <output id="list"></output>
-
-                  <script>
-                    function handleFileSelect(evt) {
-                      var files = evt.target.files; // FileList object
-
-                      // files is a FileList of File objects. List some properties.
-                      var output = [];
-                      for (var i = 0, f; f = files[i]; i++) {
-                      
-                          output.push('<li><strong>', f.name);
-                      }
-                      document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
-                    }
-                    
-                  //   document.querySelector("#openfile").onchange = function() {
-                  //     [].slice.call( this.files ).forEach( function(v) {
-                  //           $("body").append("<div>"+v.name+"</div>" );
-                  //     });
-                  // };
-
-                    document.getElementById('openfile').addEventListener('change', handleFileSelect, false);
-                  </script>
                 </label>
                 <input type=submit value=Upload style="margin-top:5px; margin-bottom:5px;width:49%;float:right;">
               </form>
               <form enctype=multipart/form-data action="download">
                 <input type=submit value=Download style="margin-top:5px; margin-bottom:5px; width:100%;">
               </form>
+              <div class="outer">
+                <div class="inner">
+                  <table id="list">
+                    <tbody></tbody>
+                  </table>
+                </div>
+              </div>
             </footer>
           </article>
           <div class="wrapper">
@@ -119,6 +103,28 @@
       search();
     });
   });
+</script>
+<script>
+  function handleFileSelect(evt) {
+    var files = evt.target.files; // FileList object
+
+    // files is a FileList of File objects. List some properties.
+    var output = [];
+    for (var i = 0, f; f = files[i]; i++) {
+
+        // output.push(f.name);
+        var tblRow = '<tr>' + "<td id = 'filename'>" + f.name + '</td>' + '</tr>';
+        $(tblRow).appendTo("#list tbody");
+    }
+  }
+
+//   document.querySelector("#openfile").onchange = function() {
+//     [].slice.call( this.files ).forEach( function(v) {
+//           $("body").append("<div>"+v.name+"</div>" );
+//     });
+// };
+
+  document.getElementById('openfile').addEventListener('change', handleFileSelect, false);
 </script>
 </body>
 </html>

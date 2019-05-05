@@ -18,7 +18,6 @@ data['movie'] = []
 UPLOAD_FOLDER = 'static/upload'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp4', 'avi', 'mkv'])
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-u_id = ''
 
 @app.route('/')
 def home():
@@ -67,8 +66,8 @@ def friends():
             cursor = db.execute("SELECT u_id FROM USERS WHERE u_name = ?", (request.form['search_bar'],))
             for row in cursor:
                 f_id2 = row[0]
-            f_id1 = u_id
-            db.execute("INSERT INTO FRIENDS (f_id1, f_id2) VALUES (?, ?)", (f_id1, f_id2));
+            session['f_id1'] = session['u_id']
+            db.execute("INSERT INTO FRIENDS (f_id1, f_id2) VALUES (?, ?)", (session['f_id1'], f_id2));
             db.commit()
             db.close()
 
@@ -88,12 +87,15 @@ def upload_file():
     if request.method == 'POST':
         #####################################################################
         # check if the post request has the file part
-        if 'file' not in request.files:
-            flash('No file part')
-            return redirect(request.url)
-        files = request.files.getlist('files[]')
-        for file in files:
-            print(file.filename)
+        # if 'file' not in request.files:
+        #     flash('No file part')
+        #     return redirect(request.url)
+        # files = request.files.getlist('files[]')
+        # for file in files:
+        #     print(file.filename)
+        user =  request.form['username'];
+        password = request.form['password'];
+        return json.dumps({'status':'OK','user':user,'pass':password});
 
             # filename = secure_filename(file.filename)
             # file.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
@@ -121,8 +123,7 @@ def upload_file():
 @app.route("/download")
 def download():
     db = sqlite3.connect('webserver.db')
-    global u_id
-    cursor = db.execute("SELECT u_key FROM USERS WHERE u_id = ?", (u_id,))
+    cursor = db.execute("SELECT u_key FROM USERS WHERE u_id = ?", (session['u_id'],))
     key = 0
     for row in cursor:
         key = row[0]
@@ -136,7 +137,6 @@ def download():
 
 @app.route('/login', methods=['POST'])
 def login():
-    global u_id
     db = sqlite3.connect('webserver.db')
     cursor = db.execute("SELECT u_password FROM USERS WHERE u_name = ?", (request.form['username'],))
     password = ''
@@ -149,7 +149,7 @@ def login():
         session['logged_in'] = True
         cursor = db.execute("SELECT u_id FROM USERS WHERE u_name = ?", (request.form['username'],))
         for row in cursor:
-            u_id = row[0]
+            session['u_id'] = row[0]
         db.close()
     return home()
 
