@@ -12,6 +12,8 @@ tmdb.API_KEY = '3aac901eabe71551bd666ed711135477'
 app = Flask(__name__)
 data = {}
 data['movie'] = []
+friend_data = {}
+friend_data['friend'] = []
 UPLOAD_FOLDER = 'static/upload'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp4', 'avi', 'mkv'])
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -82,7 +84,9 @@ def search():
 
 @app.route('/friends', methods=['GET', 'POST'])
 def friends():
-
+    friends = request.args.get('username', 0, type=None)
+    print("\n\n\n" + str(friends) + "\n\n\n")
+    friend_data['friend'].clear()
     db = sqlite3.connect('webserver.db')
     info = ""
     find1 = db.execute("SELECT f_id2 FROM FRIENDS WHERE f_id1 = ?", (session['u_id'],))
@@ -99,6 +103,18 @@ def friends():
         find = db.execute("SELECT u_name FROM USERS WHERE u_id = ?", (i,))
         for row in find:
           x += row[0] + ", "
+    for i in your_friends:
+        if i in wants_you:
+            cursor = db.execute('''SELECT u_name, u_email, u_total FROM USERS WHERE u_id = ?''', (i,))
+            for row in cursor:
+                friend_data['friend'].append({
+                    'user_name': row[0],
+                    'user_email': row[1],
+                    'user_total': row[2]
+                })
+    with open('static/friend_data.json', 'w') as outfile:
+        json.dump(friend_data, outfile)
+
     x = x[:-2]
     info += str(x)
     db.commit()
@@ -108,6 +124,7 @@ def friends():
         if not session.get('logged_in'):
             return render_template('login.html')
         else:
+            friend_data['friend'].clear()
             db = sqlite3.connect('webserver.db')
 
             cursor = db.execute("SELECT u_id FROM USERS WHERE u_name = ?", (request.form['search_bar'],))
@@ -134,6 +151,17 @@ def friends():
                         find = db.execute("SELECT u_name FROM USERS WHERE u_id = ?", (i,))
                         for row in find:
                           x += row[0] + ", "
+                    for i in your_friends:
+                        if i in wants_you:
+                            cursor = db.execute('''SELECT u_name, u_email, u_total FROM USERS WHERE u_id = ?''', (i,))
+                            for row in cursor:
+                                friend_data['friend'].append({
+                                    'user_name': row[0],
+                                    'user_email': row[1],
+                                    'user_total': row[2]
+                                })
+                    with open('static/friend_data.json', 'w') as outfile:
+                        json.dump(friend_data, outfile)
                     x = x[:-2]
                     info += str(x)
                     db.commit()
@@ -211,6 +239,13 @@ def upload_file():
 
         with open('static/movies.json', 'w') as outfile:
             json.dump(data, outfile)
+
+    cursor = db.execute("SELECT count(m_id) FROM COLLECTIONS WHERE u_id = ?", (session['u_id'],))
+    for row in cursor:
+        count = row[0]
+    db.execute("UPDATE USERS SET u_total = ? WHERE u_id = ?", (count, session['u_id'],));
+
+    print("\n\n", list(cursor))
 
     db.commit()
     db.close()

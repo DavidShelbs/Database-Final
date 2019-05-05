@@ -45,8 +45,9 @@ body {
   height: 500px;
   width:100%;
 }
-thead {
-  display: none;
+.userprofile {
+  overflow:auto;
+  width:100%;
 }
 #topnav {
   width: 100%;

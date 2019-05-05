@@ -7,6 +7,9 @@
 <link href="static/layout/styles/styles.css" rel="stylesheet" type="text/css" media="all">
 <link rel='icon' href='/static/images/favicon.ico' type='image/x-icon'/ >
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"> </script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="{{url_for('static', filename='jquery.js') }}">\x3C/script>')</script>
+<script type=text/javascript>$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};</script>
 
 </head>
 
@@ -73,10 +76,22 @@
               </form> -->
             </footer>
           </article>
-         <!--  <div class="wrapper">
-            <div class="profile">
+          <div class="wrapper">
+            <div class="userprofile">
               <table id="userdata" border="2">
                 <thead>
+                  <tr>
+                    <th class="poster">Username</th>
+                    <th class="title">Email</th>
+                    <th class="release_date">Number of Movies</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+            <div class="profile">
+              <table id="moviedata" border="2">
+                <thead style="display: none;">
                   <tr>
                     <th class="poster">Cover</th>
                     <th class="title">Title</th>
@@ -86,7 +101,7 @@
                 <tbody></tbody>
               </table>
             </div>
-          </div> -->
+          </div>
         </li>
       </ul>
     </div>
@@ -98,17 +113,38 @@
 <script src="static/layout/scripts/jquery.flexslider-min.js"></script>
 <script>
   function search() {
-    // var table = document.getElementById('userdata');
-    // for (var i = table.rows.length - 1; i > 0; i--) {
-    //   table.deleteRow(i);
-    // }
+    var table = document.getElementById('userdata');
+    for (var i = table.rows.length - 1; i > 0; i--) {
+      table.deleteRow(i);
+    }
     $.getJSON('static/movies.json', function(data) {
       $.each(data.movie, function(i, f) {
         var url = "https://image.tmdb.org/t/p/w92/" + f.poster_path;
         var tblRow = "<tr>" + "<td class = 'poster'>" + "<img id = 'url_img' >" + "</td>" + "<td class = 'title'>" + "<b>" + f.title + "</b>" + '\n\n' + f.overview + '\n\n' + "</td>" + "<td class = 'release_date'>" + f.release_date + "</td>" + "</tr>"
-        $(tblRow).appendTo("#userdata tbody");
+        $(tblRow).appendTo("#moviedata tbody");
         document.getElementById('url_img').src = url;
         document.getElementById('url_img').id = url;
+      });
+    });
+    $.getJSON('static/friend_data.json', function(data) {
+      $.each(data.friend, function(i, f) {
+        var tblRow = "<tr>" + "<td class = 'poster'>" + "<input type='button' name='username' id ='username' class='btn btn-primary btn-large btn-block' readonly/>" + "</td>" + "<td class = 'release_date'>" + f.user_email + "</td>" + "<td class = 'release_date'>" + f.user_total + "</td>" + "</tr>"
+        $(tblRow).appendTo("#userdata tbody");
+        document.getElementById('username').value = f.user_name;
+
+        $(function() {
+          $('#username').bind('click', function() {
+            var name = $(this).val();
+            $.getJSON($SCRIPT_ROOT + '/friends', {
+              username: name
+            }, function(data) {
+              $("#result").text(data.result);
+            });
+            return false;
+          });
+        });
+        document.getElementById('username').name = f.user_name;
+        document.getElementById('username').id = f.user_name;
       });
     });
   }
@@ -118,7 +154,6 @@
   });
 
   $(function(){
-    search();
     $('.group[action="search"]').submit(function(){
       search();
     });
