@@ -21,7 +21,28 @@ def home():
     if not session.get('logged_in'):
         return render_template('login.html')
     else:
-        return flask.render_template('index.html')
+        data['movie'].clear()
+        info = ""
+        db = sqlite3.connect('webserver.db')
+        cursor = db.execute('''SELECT m_title, m_release_date, m_age, r_id, m_poster
+                            FROM MOVIES, COLLECTIONS
+                            WHERE MOVIES.m_id = COLLECTIONS.m_id AND COLLECTIONS.u_id = ?''', (session['u_id'],))
+        for row in cursor:
+            info += row[0]
+            find = db.execute('''SELECT m_rating FROM REVIEWS WHERE r_id = ?''', (row[3],))
+            for cell in find:
+                rating = cell[0]
+
+            data['movie'].append({
+                'title': row[0],
+                # 'overview': s['overview'],
+                'poster_path': row[4],
+                'release_date': row[1],
+                'vote_average': rating
+            })
+        with open('static/movies.json', 'w') as outfile:
+            json.dump(data, outfile)
+        return flask.render_template('index.html', info = info)
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
@@ -30,20 +51,29 @@ def search():
             return render_template('login.html')
         else:
             data['movie'].clear()
-            search_query = request.form['search_bar']
-            search = tmdb.Search()
-            response = search.movie(query=search_query)
-            for s in search.results:
+            info = ""
+            db = sqlite3.connect('webserver.db')
+            cursor = db.execute('''SELECT m_title, m_release_date, m_age, r_id, m_poster
+                                FROM MOVIES, COLLECTIONS
+                                WHERE MOVIES.m_id = COLLECTIONS.m_id
+                                AND COLLECTIONS.u_id = ?
+                                AND MOVIES.m_title = ?''', (session['u_id'], request.form['search_bar'],))
+            for row in cursor:
+                info += row[0]
+                find = db.execute('''SELECT m_rating FROM REVIEWS WHERE r_id = ?''', (row[3],))
+                for cell in find:
+                    rating = cell[0]
+
                 data['movie'].append({
-                    'title': s['title'],
-                    'overview': s['overview'],
-                    'poster_path': s['poster_path'],
-                    'release_date': s['release_date'],
-                    'vote_average': s['vote_average']
+                    'title': row[0],
+                    # 'overview': s['overview'],
+                    'poster_path': row[4],
+                    'release_date': row[1],
+                    'vote_average': rating
                 })
             with open('static/movies.json', 'w') as outfile:
                 json.dump(data, outfile)
-            return flask.render_template('index.html')
+            return flask.render_template('index.html', info = info)
     else:
         if not session.get('logged_in'):
             return render_template('login.html')

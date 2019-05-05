@@ -60,7 +60,10 @@ thead {
   float: right;
   margin: 5px;
 }
-
+#home{
+  float: left;
+  margin: 5px;
+}
 #openfile {
 	width: 0.1px;
 	height: 0.1px;

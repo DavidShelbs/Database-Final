@@ -13,6 +13,7 @@
 </head>
 <body id="top">
   <div id="topnav">
+    <a href='/' style="text-decoration:none;"><input type="button" value="Home" class="btn btn-primary btn-large btn-block" id="home"></a>
     <a href='/logout' style="text-decoration:none;"><input type="button" value="Log Out" class="btn btn-primary btn-large btn-block" id="logout"></a>
     <a href='/friends' style="text-decoration:none;"><input type="button" value="Friends" class="btn btn-primary btn-large btn-block" id="friends"></a>
   </div>
@@ -43,6 +44,9 @@
               <form enctype=multipart/form-data action="download">
                 <input type=submit value=Download style="margin-top:5px; margin-bottom:5px; width:100%;">
               </form>
+              {% if not info %}
+                <p>It looks like there is nothing to display!.</p>
+              {% endif %}
               <div class="outer">
                 <div class="inner">
                   <form method=post action="upload">
