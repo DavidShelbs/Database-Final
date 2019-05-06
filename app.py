@@ -84,10 +84,39 @@ def search():
 
 @app.route('/friends', methods=['GET', 'POST'])
 def friends():
-    friends = request.args.get('username', 0, type=None)
-    print("\n\n\n" + str(friends) + "\n\n\n")
+    friend_id = ""
+    friend = request.args.get('username', 0, type=None)
     friend_data['friend'].clear()
     db = sqlite3.connect('webserver.db')
+    friend_select = db.execute("SELECT u_id FROM USERS WHERE u_name = ?", (friend,))
+    for row in friend_select:
+        friend_id = row[0]
+
+
+
+    data['movie'].clear()
+    cursor = db.execute('''SELECT m_title, m_release_date, m_age, r_id, m_poster
+                        FROM MOVIES, COLLECTIONS
+                        WHERE MOVIES.m_id = COLLECTIONS.m_id
+                        AND COLLECTIONS.u_id = ?''', (friend_id,))
+    for row in cursor:
+        find = db.execute('''SELECT m_rating FROM REVIEWS WHERE r_id = ?''', (row[3],))
+        for cell in find:
+            rating = cell[0]
+
+        data['movie'].append({
+            'title': row[0],
+            # 'overview': s['overview'],
+            'poster_path': row[4],
+            'release_date': row[1],
+            'vote_average': rating
+        })
+    with open('static/movies.json', 'w') as outfile:
+        json.dump(data, outfile)
+
+
+
+
     info = ""
     find1 = db.execute("SELECT f_id2 FROM FRIENDS WHERE f_id1 = ?", (session['u_id'],))
     find2 = db.execute("SELECT f_id1 FROM FRIENDS WHERE f_id2 = ?", (session['u_id'],))
