@@ -26,7 +26,7 @@ def home():
         data['movie'].clear()
         info = ""
         db = sqlite3.connect('webserver.db')
-        cursor = db.execute('''SELECT m_title, m_release_date, m_age, r_id, m_poster
+        cursor = db.execute('''SELECT m_title, m_release_date, m_age, r_id, m_poster, m_overview
                             FROM MOVIES, COLLECTIONS
                             WHERE MOVIES.m_id = COLLECTIONS.m_id AND COLLECTIONS.u_id = ?''', (session['u_id'],))
         for row in cursor:
@@ -37,7 +37,7 @@ def home():
 
             data['movie'].append({
                 'title': row[0],
-                # 'overview': s['overview'],
+                'overview': row[5],
                 'poster_path': row[4],
                 'release_date': row[1],
                 'vote_average': rating
@@ -55,7 +55,7 @@ def search():
             data['movie'].clear()
             info = ""
             db = sqlite3.connect('webserver.db')
-            cursor = db.execute('''SELECT m_title, m_release_date, m_age, r_id, m_poster
+            cursor = db.execute('''SELECT m_title, m_release_date, m_age, r_id, m_poster, m_overview
                                 FROM MOVIES, COLLECTIONS
                                 WHERE MOVIES.m_id = COLLECTIONS.m_id
                                 AND COLLECTIONS.u_id = ?
@@ -68,7 +68,7 @@ def search():
 
                 data['movie'].append({
                     'title': row[0],
-                    # 'overview': s['overview'],
+                    'overview': row[5],
                     'poster_path': row[4],
                     'release_date': row[1],
                     'vote_average': rating
@@ -95,7 +95,7 @@ def friends():
 
 
     data['movie'].clear()
-    cursor = db.execute('''SELECT m_title, m_release_date, m_age, r_id, m_poster
+    cursor = db.execute('''SELECT m_title, m_release_date, m_age, r_id, m_poster, m_overview
                         FROM MOVIES, COLLECTIONS
                         WHERE MOVIES.m_id = COLLECTIONS.m_id
                         AND COLLECTIONS.u_id = ?''', (friend_id,))
@@ -106,7 +106,7 @@ def friends():
 
         data['movie'].append({
             'title': row[0],
-            # 'overview': s['overview'],
+            'overview': row[5],
             'poster_path': row[4],
             'release_date': row[1],
             'vote_average': rating
@@ -239,12 +239,11 @@ def upload_file():
             })
             if s['release_date'] != None and s['release_date'] != '':
                 age = today.year - int(s['release_date'][0:4])
-            # print(int(s['release_date'][0:3]))
             cursor = db.execute("SELECT m_id FROM MOVIES WHERE m_id = ?", (s['id'],));
             for row in cursor:
                 m_id = row[0]
             if m_id == "":
-                db.execute("INSERT INTO MOVIES (m_id, m_release_date, m_title, m_age, m_poster) VALUES (?, ?, ?, ?, ?)", (s['id'], s['release_date'], s['title'], age, s['poster_path'],));
+                db.execute("INSERT INTO MOVIES (m_id, m_release_date, m_title, m_age, m_poster, m_overview) VALUES (?, ?, ?, ?, ?, ?)", (s['id'], s['release_date'], s['title'], age, s['poster_path'], s['overview'],));
                 print("Added " + s['title'])
                 db.execute("INSERT INTO REVIEWS (m_rating, m_id) VALUES (?, ?)", (s['vote_average'], s['id'],));
                 cursor = db.execute("SELECT r_id FROM REVIEWS WHERE m_id = ?", (s['id'],));
@@ -254,7 +253,7 @@ def upload_file():
             else:
                 print("Updated " + s['title'])
                 db.execute("UPDATE REVIEWS SET m_rating = ? WHERE m_id = ?", (s['vote_average'], s['id'],));
-                db.execute("UPDATE MOVIES SET m_age = ? WHERE m_id = ?", (age, s['id'],));
+                db.execute("UPDATE MOVIES SET m_age = ?, m_overview = ? WHERE m_id = ?", (age, s['overview'], s['id'],));
                 m_id = ""
             cursor = db.execute("SELECT m_id, u_id FROM COLLECTIONS WHERE m_id = ? AND u_id = ?", (s['id'], session['u_id'],));
             for row in cursor:
@@ -280,19 +279,19 @@ def upload_file():
     db.close()
     return home()
 
-@app.route("/download")
-def download():
-    db = sqlite3.connect('webserver.db')
-    cursor = db.execute("SELECT u_key FROM USERS WHERE u_id = ?", (session['u_id'],))
-    key = 0
-    for row in cursor:
-        key = row[0]
-    if key == 1:
-        file = open("static/upload/Divergent.txt", "rb")
-        return flask.Response(file, mimetype="video/mp4", headers={"Content-disposition" : "attachment; filename=Divergent.mp4"})
-        return home()
-    else:
-        return home()
+# @app.route("/download")
+# def download():
+#     db = sqlite3.connect('webserver.db')
+#     cursor = db.execute("SELECT u_key FROM USERS WHERE u_id = ?", (session['u_id'],))
+#     key = 0
+#     for row in cursor:
+#         key = row[0]
+#     if key == 1:
+#         file = open("static/upload/Divergent.txt", "rb")
+#         return flask.Response(file, mimetype="video/mp4", headers={"Content-disposition" : "attachment; filename=Divergent.mp4"})
+#         return home()
+#     else:
+#         return home()
 
 @app.route('/login', methods=['POST'])
 def login():

@@ -38,7 +38,7 @@ td {
   font-size: 100px;
 }
 body {
-  background-image: url("/static/images/background.jpg")
+  background-image: url("/static/images/download.jpg")
 }
 .profile {
   overflow:auto;
@@ -58,7 +58,7 @@ body {
   margin: 5px;
 }
 #friends {
-  float: right;
+  float: left;
   margin: 5px;
 }
 #home{

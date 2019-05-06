@@ -48,9 +48,10 @@
       <ul class="slides">
         <li>
           <article>
-            <h1 id="header">Furby</h1>
-            <!-- <h3 class="heading">Find A Movie</h3> -->
-            <p>Search friend's movies!</p>
+            <div style="border:5px solid #373737; border-radius:30px; background-color:#fbfbfb;">
+              <h1 id="header">Furby</h1>
+              <p>Search your friend's movies!</p>
+            </div>
             <footer id="search">
               <form class="group" method="post" action="friends">
                 <fieldset>
@@ -91,7 +92,7 @@
             </div>
             <div class="profile">
               <table id="moviedata" border="2">
-                <thead style="display: none;">
+                <thead>
                   <tr>
                     <th class="poster">Cover</th>
                     <th class="title">Title</th>
@@ -133,7 +134,7 @@
               $("#result").text(data.result);
             });
             $(document).ready(function() {
-               $("#moviedata").find("tr:gt(0)").remove();
+              $("#moviedata").find("tr:gt(0)").remove();
             });
             setTimeout(
               function()

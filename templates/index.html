@@ -22,8 +22,10 @@
       <ul class="slides">
         <li>
           <article>
-            <h1 id="header">Furby</h1>
-            <p>Search your movies!</p>
+            <div style="border:5px solid #373737; border-radius:30px; background-color:#fbfbfb;">
+              <h1 id="header">Furby</h1>
+              <p>Search your movies!</p>
+            </div>
             <footer id="search">
               <form class="group" method="post" action="search">
                 <fieldset>
@@ -40,9 +42,6 @@
                   <input type="file" webkitdirectory id="openfile" name="file" multiple />
                 </label>
                 <input id="upload" type=submit value=Upload style="margin-top:5px; margin-bottom:5px;width:49%;float:right;">
-              </form>
-              <form enctype=multipart/form-data action="download">
-                <input type=submit value=Download style="margin-top:5px; margin-bottom:5px; width:100%;">
               </form>
               {% if not info %}
                 <p>It looks like there is nothing to display!.</p>
