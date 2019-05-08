@@ -331,6 +331,9 @@ def signup():
                 return render_template('signup.html')
             else:
                 db.execute("INSERT INTO USERS (u_name, u_email, u_password) VALUES (?, ?, ?)", (request.form['username'], request.form['e-mail'], request.form['password']));
+                cursor = db.execute("SELECT u_id FROM USERS WHERE u_name = ?", (request.form['username'],))
+                for row in cursor:
+                    session['u_id'] = row[0]
                 db.commit()
                 db.close()
                 return render_template('index.html')
